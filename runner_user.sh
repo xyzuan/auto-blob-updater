@@ -51,13 +51,13 @@ extract() {
 build_conf() {
     mkdir repo
     cd repo
-    git config --global user.email "baalajimaestro@computer4u.com"
-    git config --global user.name "baalajimaestro"
+    git config --global user.email "sound0020@gmail.com"
+    git config --global user.name "Dyneteve"
 }
 
 init_repo() {
     echo "Repo initialised......."
-    repo init -u https://github.com/MoKee/android.git -b mkp --depth=1 > /dev/null 2>&1
+    repo init -u https://github.com/PixelExperience/manifest -b pie --depth=1 > /dev/null 2>&1
     echo "Repo Syncing started......"
     repo sync -j$(nproc) --no-tags --no-clone-bundle -c > /dev/null 2>&1
     echo -e "\e[32mRepo Synced....."
@@ -65,9 +65,9 @@ init_repo() {
 
 dt() {
     echo "Cloning device tree......."
-    git clone https://github.com/GuaiYiHu/android_device_xiaomi_whyred device/xiaomi/whyred > /dev/null 2>&1
-    git clone https://github.com/GuaiYiHu/android_vendor_xiaomi_whyred vendor/xiaomi/whyred > /dev/null 2>&1
-    cd device/xiaomi/whyred
+    git clone https://github.com/PixelExperience-Devices/device_xiaomi_violet -b pie device/xiaomi/violet > /dev/null 2>&1
+    git clone https://github.com/PixelExperience-Devices/vendor_xiaomi_violet -b pie vendor/xiaomi/violet > /dev/null 2>&1
+    cd device/xiaomi/violet
 }
 
 gen_blob() {
@@ -76,13 +76,12 @@ gen_blob() {
 }
 
 push_vendor() {
-    cd ~/repo/vendor/xiaomi/whyred
+    cd ~/repo/vendor/xiaomi/violet
     git remote rm origin
-    git remote add origin https://baalajimaestro:$(cat /tmp/GH_TOKEN)@github.com/baalajimaestro/vendor_xiaomi_whyred.git
+    git remote add origin https://Dyneteve:$(cat /tmp/GH_TOKEN)@github.com/PixelExperience-Devices/vendor_xiaomi_violet.git
     git add .
-    git commit -m "[MaestroCI]: Re-gen blobs from MIUI $(cat /tmp/version)" --signoff
-    git checkout -b $(cat /tmp/version)
-    git push --force origin $(cat /tmp/version)
+    git commit -m "violet: Re-gen blobs from MIUI $(cat /tmp/version)" --signoff
+    git push origin pie
     echo "Job Successful!"
 }
 
