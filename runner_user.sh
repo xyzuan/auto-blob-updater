@@ -81,7 +81,8 @@ push_vendor() {
     git remote add origin https://Dyneteve:$(cat /tmp/GH_TOKEN)@github.com/PixelExperience-Devices/vendor_xiaomi_violet.git
     git add .
     git commit -m "violet: Re-gen blobs from MIUI $(cat /tmp/version)" --signoff
-    git push origin pie
+    git checkout -B violet-beta
+    git push origin violet-beta -f
     echo "Job Successful!"
 }
 
