@@ -45,7 +45,7 @@ extract() {
 
 build_conf() {
     mkdir repo && cd repo
-    git config --global user.email "sound0020@gmail.com"
+    git config --global user.email "dyneteve@pixelexperience.org"
     git config --global user.name "Dyneteve"
 }
 
@@ -55,10 +55,9 @@ google_cookie() {
 }
 
 init_repo() {
-    echo "Repo initialised......."
-    repo init -u git://github.com/PixelExperience/manifest.git -b pie --depth=1 > /dev/null 2>&1
-    echo "Repo Syncing started......"
-    repo sync --force-sync --current-branch --no-tags --no-clone-bundle --optimized-fetch --prune -j$(nproc) -q > /dev/null 2>&1
+    echo "Cloning vendor repo and its deps......."
+    git clone https://github.com/PixelExperience/vendor_aosp --depth=1 vendor/aosp
+    git clone https://github.com/LineageOS/android_prebuilts_tools-lineage --depth=1 prebuilts/tools-custom
     echo -e "\e[32mRepo Synced....."
 }
 
