@@ -57,8 +57,8 @@ init_repo() {
 
 dt() {
     echo "Cloning device tree......."
-    git clone https://github.com/PixelExperience-Devices/device_xiaomi_violet -b pie device/xiaomi/violet > /dev/null 2>&1
-    git clone https://github.com/PixelExperience-Devices/vendor_xiaomi_violet -b pie vendor/xiaomi/violet --depth=10 > /dev/null 2>&1
+    git clone https://github.com/PixelExperience-Devices/device_xiaomi_violet -b ten device/xiaomi/violet > /dev/null 2>&1
+    git clone https://github.com/PixelExperience-Devices/vendor_xiaomi -b ten vendor/xiaomi --depth=5 > /dev/null 2>&1
     cd device/xiaomi/violet
 }
 
@@ -75,14 +75,14 @@ violet_patches() {
 push_vendor() {
     cd $CURR_DIR/repo/vendor/xiaomi/violet
     git remote rm origin
-    git remote add origin https://Dyneteve:${API_KEY}@github.com/PixelExperience-Devices/vendor_xiaomi_violet.git
+    git remote add origin https://Dyneteve:${API_KEY}@github.com/PixelExperience-Devices/vendor_xiaomi.git
     # Patch my stuff
     bash patch.sh && rm patch.sh
     # For Dyneteve only
     git add .
     git commit -m "violet: Re-gen blobs from MIUI $(cat /tmp/version)" --signoff
-    git checkout -B violet-beta
-    git push origin violet-beta -f
+    git checkout -B ten
+    git push origin ten
     echo "Job Successful!"
 }
 
