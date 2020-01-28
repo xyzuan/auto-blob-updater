@@ -13,5 +13,4 @@ echo "***Auto Blob Updater***"
 apt update > /dev/null 2>&1
 apt install curl git python3 python3-pip patchelf brotli unzip zip p7zip-full -y > /dev/null 2>&1
 pip3 install requests pyYaml > /dev/null 2>&1
-python3 strip.py
 bash -c "bash runner_user.sh"

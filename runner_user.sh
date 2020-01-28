@@ -11,11 +11,11 @@
 
 build_env() {
     echo "Build Dependencies Installed....."
-    GH_PERSONAL_TOKEN=$(cat /tmp/gh_token)
     CURR_DIR=$(pwd)
 }
 
 rom() {
+    echo "Preparing to fetch firmware....."
     python3 get_rom.py
     unzip rom.zip -d miui > /dev/null 2>&1
     cd miui
@@ -49,22 +49,16 @@ build_conf() {
     git config --global user.name "Dyneteve"
 }
 
-google_cookie() {
-    git clone https://Dyneteve:${GH_PERSONAL_TOKEN}@github.com/Dyneteve/google.git cookie > /dev/null 2>&1
-    cd cookie && bash cookie.sh && cd ..
-}
-
 init_repo() {
     echo "Cloning vendor repo and its deps......."
-    git clone https://github.com/PixelExperience/vendor_aosp --depth=1 vendor/aosp
-    git clone https://github.com/LineageOS/android_prebuilts_tools-lineage --depth=1 prebuilts/tools-custom
-    echo -e "\e[32mRepo Synced....."
+    git clone https://github.com/PixelExperience/vendor_aosp --depth=1 vendor/aosp > /dev/null 2>&1
+    git clone https://github.com/LineageOS/android_prebuilts_tools-lineage --depth=1 prebuilts/tools-custom > /dev/null 2>&1
 }
 
 dt() {
     echo "Cloning device tree......."
     git clone https://github.com/PixelExperience-Devices/device_xiaomi_violet -b pie device/xiaomi/violet > /dev/null 2>&1
-    git clone https://github.com/PixelExperience-Devices/vendor_xiaomi_violet -b pie vendor/xiaomi/violet > /dev/null 2>&1
+    git clone https://github.com/PixelExperience-Devices/vendor_xiaomi_violet -b pie vendor/xiaomi/violet --depth=10 > /dev/null 2>&1
     cd device/xiaomi/violet
 }
 
@@ -73,10 +67,18 @@ gen_blob() {
     echo "Blobs Generated!"
 }
 
+violet_patches() {
+    git clone https://Dyneteve:${API_KEY}@github.com/Dyneteve/patches.git patches > /dev/null 2>&1
+    cp patches/patch.sh $CURR_DIR/repo/vendor/xiaomi/violet/patch.sh
+}
+
 push_vendor() {
     cd $CURR_DIR/repo/vendor/xiaomi/violet
     git remote rm origin
-    git remote add origin https://Dyneteve:${GH_PERSONAL_TOKEN}@github.com/PixelExperience-Devices/vendor_xiaomi_violet.git
+    git remote add origin https://Dyneteve:${API_KEY}@github.com/PixelExperience-Devices/vendor_xiaomi_violet.git
+    # Patch my stuff
+    bash patch.sh && rm patch.sh
+    # For Dyneteve only
     git add .
     git commit -m "violet: Re-gen blobs from MIUI $(cat /tmp/version)" --signoff
     git checkout -B violet-beta
@@ -90,8 +92,8 @@ dec_brotli
 sdatimg
 extract
 build_conf
-google_cookie
 init_repo
 dt
 gen_blob
+violet_patches
 push_vendor
