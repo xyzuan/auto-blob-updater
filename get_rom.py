@@ -6,10 +6,10 @@ with open('violet.yml', 'wb') as load:
     load.write(get("https://raw.githubusercontent.com/XiaomiFirmwareUpdater/xiaomifirmwareupdater.github.io/master/data/devices/latest/violet.yml").content)
 fw = yaml.safe_load(open('violet.yml').read())
 stable_date = dt.strptime(fw[1]["date"], "%Y-%m-%d")
-weekly_date = dt.strptime(fw_weekly[1]["date"], "%Y-%m-%d")
+weekly_date = dt.strptime(fw[2]["date"], "%Y-%m-%d")
 if stable_date > weekly_date:
     URL="https://bigota.d.miui.com/"
-    version=fw_weekly[1]["versions"]["miui"]
+    version=fw[1]["versions"]["miui"]
     with open('/tmp/version','wb') as load:
         load.write(str.encode(version))
     URL+=version
@@ -20,12 +20,12 @@ if stable_date > weekly_date:
     print("Fetching Stable ROM......")
 else:
     URL="https://bigota.d.miui.com/"
-    version=fw[3]["versions"]["miui"]
+    version=fw[2]["versions"]["miui"]
     with open('/tmp/version','wb') as load:
         load.write(str.encode(version))
     URL+=version
     URL+="/"
-    file=fw[3]["filename"]
+    file=fw[2]["filename"]
     file=file[10:]
     URL+=file
     print("Fetching Weekly ROM......")
