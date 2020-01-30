@@ -58,7 +58,7 @@ init_repo() {
 dt() {
     echo "Cloning device tree......."
     git clone https://github.com/PixelExperience-Devices/device_xiaomi_violet -b ten device/xiaomi/violet > /dev/null 2>&1
-    git clone https://github.com/PixelExperience-Devices/vendor_xiaomi -b ten vendor/xiaomi --depth=5 > /dev/null 2>&1
+    git clone https://github.com/PixelExperience-Devices/vendor_xiaomi -b ten vendor/xiaomi > /dev/null 2>&1
     cd device/xiaomi/violet
 }
 
