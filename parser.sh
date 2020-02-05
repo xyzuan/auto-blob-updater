@@ -5,13 +5,13 @@
 
 website_curl()
 {
-    wget https://github.com/XiaomiFirmwareUpdater/miui-updates-tracker/tree/master/stable_fastboot -O page.htm
+    wget https://github.com/XiaomiFirmwareUpdater/xiaomifirmwareupdater.github.io/tree/0e5c83745c7ad4b9b4bf248458f0b1d82b906bcd/data/vendor/latest -O page.htm
     count_links
 }
 
 function count_links()
 {
-    mapfile -t device_link < <( cat page.htm | grep -E "href=\"*.*yml\""| cut -d "<" -f3 | cut -d " " -f5 | cut -d "\"" -f2)
+    mapfile -t device_link < <( cat page.htm | grep -E "href=\"*.*yml\""| cut -d "<" -f3 | cut -d " " -f3 | cut -d "\"" -f2)
     len=${#device_link[@]}
     if [ $len -eq 0 ]; then
         exit 1
@@ -26,12 +26,9 @@ function select_link()
     select id in "${device_link[@]}" 
     do
         case "$device_nr" in
-            *) device_nmbr=$(echo "https://github.com/${id}")
-	        echo $device_nmbr
-            export device_name=$(echo $device_nmbr | cut -d "/" -f10|cut -d "." -f1)
- 	        export yaml_file=$( echo $device_nmbr | cut -d "/" -f10)
+            *)  yaml_file=${id}
 	        echo $yaml_file
-	        echo "You choosed $device_name"
+	        echo "You chose $yaml_file"
 	        yaml_load
         esac
     done
@@ -39,25 +36,33 @@ function select_link()
 
 function yaml_load()
 {
-    raw_file="https://raw.githubusercontent.com/XiaomiFirmwareUpdater/miui-updates-tracker/master/stable_fastboot/$yaml_file"
+    raw_file="https://raw.githubusercontent.com/XiaomiFirmwareUpdater/xiaomifirmwareupdater.github.io/0e5c83745c7ad4b9b4bf248458f0b1d82b906bcd/data/vendor/latest/$yaml_file"
     wget $raw_file
-    yaml_reader	
+    yaml_parser 	
 }
 
-function yaml_reader() 
+function yaml_parser() 
 {
-    yml_http_link=$(grep "http" $yaml_file | cut -d " " -f2)
-    echo $yml_http_link
-    ota_filename=$(grep "filename" $yaml_file | cut -d " " -f2)
-    echo $ota_filename
-    rom_loader
+     mapfile -t git_links < <(grep -i "github" $yaml_file | cut -d " " -f6)
+     select git_id in "${git_links[@]}"
+    do
+        case "$link_nr" in
+            *)  export git_file=${git_id[$link_nr]}
+                echo "$git_file"
+                ota_filename=$(echo  $git_file | cut -d "/" -f9)
+    		echo $ota_filename
+		rom_loader
+
+        esac
+    done
+
     exit
 }
 
 rom_loader()
 {
-    wget $yml_http_link
-    tar -xvzf $ota_filename
+    wget $git_file
+    unzip $ota_filename
     export dir_name=$(basename $ota_filename .tgz)
     echo $dir_name
     dec_brotli
@@ -80,8 +85,8 @@ sdatimg() {
 
 extract() {
     echo "Extracting the img's....."
-    mkdir system
-    mkdir vendor
+#    mkdir system
+ #   mkdir vendor
     7z x system.img -y -osystem > /dev/null 2>&1
     7z x vendor.img -y -ovendor > /dev/null 2>&1
     exit 1
